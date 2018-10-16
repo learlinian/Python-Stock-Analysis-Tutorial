@@ -25,12 +25,9 @@ for key in stock:
     info = urllib.request.urlopen(req)
     string = str(info.read())
     temp = '\\"' + key + '\\'
-    # print(temp)
-    # print(string)
 
     string = string.partition(temp)[2]
-    string = string.partition('\\",\\')[2]
-    string = string.partition('\\"')[2]
+    string = string.partition('\\\\"')[2]
     string = string.partition('\\\\"')[0]
     string = parse(string)
     stock[key] = string
