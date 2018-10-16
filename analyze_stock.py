@@ -19,7 +19,7 @@ def put_stock():
         for key in stock:
             sheet[index + '1'].value = key
             index = chr(ord(index)+1)
-        wb.save("C:\python\stock monitor\youtube\stock.xlsx")   # change the link to your file's location
+        wb.save("C:\python\stock monitor\youtube\stock.xlsx")   # change the path to your file's location
 
 
 # put time and stock information
@@ -65,5 +65,5 @@ if __name__ == "__main__":
     sheet = wb.worksheets[0]
     put_stock()
     put_info()
-    wb.save("C:\python\stock monitor\youtube\stock.xlsx")   # change the link to your file's location
+    wb.save("C:\python\stock monitor\youtube\stock.xlsx")   # change the path to your file's location
     
