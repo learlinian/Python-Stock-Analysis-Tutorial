@@ -4,7 +4,7 @@ import urllib.request
 url = "https://www.google.com.sg/search?q="
 # url = "http://nianliblog.com"
 
-stock = {"GOOGL": 0.0, "AMZN": 0.0, "MSFT": 0.0}
+stock = {"GOOGL": [0.0, 10, 900], "AMZN": [0.0, 5, 1600], "MSFT": [0.0, 100, 90]}
 
 # Try to login google page with domains
 headers = {}
@@ -19,6 +19,7 @@ def parse(data):
 
 # Happy collection time
 def get_info():
+    global stock
     for key in stock:
         url_searching = url + key
         # print(url_searching)
@@ -31,10 +32,11 @@ def get_info():
         string = string.partition('\\\\"')[2]
         string = string.partition('\\\\"')[0]
         price = parse(string)
-        stock[key] = price
-    print(stock)
+        stock[key][0] = price
+    return stock
 
 
 if __name__ == "__main__":
-    get_info()
+    result = get_info()
+    print(result)
 
