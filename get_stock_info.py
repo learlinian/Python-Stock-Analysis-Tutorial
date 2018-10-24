@@ -14,7 +14,7 @@ headers['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/5
 # Parse the number in string format into digital format
 def parse(data):
     data = data.replace(',', '')
-    return int(data.partition('.')[0])+int(data.partition('.')[2])/10
+    return int(data.partition('.')[0])+int(data.partition('.')[2])/100
 
 
 # Happy collection time
