@@ -1,10 +1,11 @@
 from openpyxl import load_workbook
+import get_stock_info  # import the python file we wrote previously
 import time
-import get_stock_info   # import the python file we wrote previously
 
 
 # check the first column numbers which is empty
 def check():
+    global sheet
     i = 1
     while sheet['C' + str(i)].value is not None:
         i += 1
@@ -14,56 +15,62 @@ def check():
 # put out stock information if it is not updated in xlsx file
 def put_stock():
     global stock
+    global sheet
     if sheet['C1'].value is None:
         index = 'C'
         for key in stock:
-            sheet[index + '1'].value = key
+            sheet[index+'1'].value = key
             index = chr(ord(index)+1)
-        wb.save("C:\python\stock monitor\youtube\stock.xlsx")   # change the path to your file's location
+        wb.save('stock.xlsx')   # change the path to your file's location
 
 
 # put time and stock information
 def put_info():
+    global sheet
     global stock
-    column_index = check()
-    sheet['A'+str(column_index)] = clock
-    init_portfolio = 0
-    current_portfolio = 0
-    index = 'C'
+    init_port = 0
+    current_port = 0
+    row_index = check()
 
-    # put titles for each columns
-    sheet['B' + str(column_index)].value = 'current Value'
-    sheet['B' + str(column_index + 1)].value = 'Percentage Change'
-    sheet['B' + str(column_index + 2)].value = 'Price Change'
-    sheet['B' + str(column_index + 3)].value = 'Portfolio Change'
+    currentData = time.strftime('%x')
+    currentTime = time.strftime('%X')
+    clock = currentData + ' ' + currentTime
+    sheet['A' + str(row_index)].value = clock
 
-    # Do calculation with updated stock information
+    # put stock features
+    sheet['B' + str(row_index)].value = 'current value'
+    sheet['B' + str(row_index+1)].value = 'percentage change'
+    sheet['B' + str(row_index+2)].value = 'price change'
+    sheet['B' + str(row_index+3)].value = 'portfolio change'
+
+    # put stock info
     for key, value in stock.items():
-        init_portfolio += value[1]*value[2]
-        current_portfolio += value[1] * value[0]
-        percentage_change = round((value[0] - value[2])/value[2]*100, 2)
-        price_change = value[0]-value[2]
+        index = 'C'
+        init_price = value[0]
+        number = value[2]
+        current_price = value[1]
+        init_port += init_price*number
+        current_port += current_price*number
+        price_change = current_price - init_price
+        percentage_change = (current_price - init_price)/init_price * 100
 
-        sheet[index + str(column_index)] = value[0]
-        sheet[index + str(column_index + 1)] = str(percentage_change) + '%'
-        sheet[index + str(column_index + 2)] = price_change
-        index = chr(ord(index)+1)
+        while sheet[index + '1'].value != key:
+            index = chr(ord(index)+1)
+        sheet[index + str(row_index)].value = current_price
+        sheet[index + str(row_index+1)].value = str(round(percentage_change, 2)) + '%'
+        sheet[index + str(row_index+2)].value = price_change
 
-    portfolio_value_change = current_portfolio - init_portfolio
-    portfolio_percentage_change = round(portfolio_value_change/init_portfolio*100, 2)
-    sheet['C' + str(column_index + 3)] = portfolio_value_change
-    sheet['D' + str(column_index + 3)] = str(portfolio_percentage_change) + '%'
+    port_price_change = current_port - init_port
+    port_percentage_change = (current_port - init_port)/init_port * 100
+    sheet['C' + str(row_index+3)].value = port_price_change
+    sheet['D' + str(row_index+3)].value = str(round(port_percentage_change, 2)) + '%'
 
 
 if __name__ == "__main__":
-    currentDate = time.strftime('%x')
-    currentTime = time.strftime('%X')
-    clock = currentDate + ' ' + currentTime
-    stock = get_stock_info.get_info()   # get updated information from get_stock_info library
-
-    wb = load_workbook("C:\python\stock monitor\youtube\stock.xlsx")
+    stock = get_stock_info.get_info()
+    wb = load_workbook('stock.xlsx')
     sheet = wb.worksheets[0]
     put_stock()
     put_info()
-    wb.save("C:\python\stock monitor\youtube\stock.xlsx")   # change the path to your file's location
-    
+
+    wb.save('stock.xlsx')  # save the excel file    
